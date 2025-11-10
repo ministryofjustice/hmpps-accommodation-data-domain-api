@@ -1,10 +1,10 @@
 info.app:
-  name: HMPPS Template Kotlin
+  name: HMPPS Accommodation Data Domain Api
   version: 1.0
 
 spring:
   application:
-    name: hmpps-template-kotlin
+    name: hmpps-accommodation-data-domain-api
 
   jackson:
     date-format: "yyyy-MM-dd HH:mm:ss"
