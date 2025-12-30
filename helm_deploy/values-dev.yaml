@@ -2,10 +2,12 @@
 # Per environment values which override defaults in hmpps-accommodation-data-domain-api/values.yaml
 
 generic-service:
+  serviceAccountName: hmpps-community-accommodation-api-service-account
   replicaCount: 2
 
   ingress:
     host: accommodation-data-domain-api-dev.hmpps.service.justice.gov.uk
+    tlsSecretName: hmpps-accommodation-data-domain-api-dev-cert
 
   env:
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: "applicationinsights.dev.json"
@@ -15,3 +17,6 @@ generic-service:
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
 generic-prometheus-alerts:
   alertSeverity: hmpps-approved-premises
+
+env_details:
+  production_env: false
