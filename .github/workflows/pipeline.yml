@@ -33,12 +33,48 @@ jobs:
   helm_lint:
     strategy:
       matrix:
-        environments: ['dev', 'preprod', 'prod']
+        #        environments: ['dev', 'preprod', 'prod']
+        environments: ["dev"]
     name: helm lint
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@v2 # WORKFLOW_VERSION
     secrets: inherit
     with:
       environment: ${{ matrix.environments }}
+  ktlint-check:
+    name: KtLintCheck
+    runs-on: ubuntu-latest
+    env:
+      _JAVA_OPTIONS: "-Xmx3g"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 21
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Run ktlintCheck
+        run: ./gradlew ktlintCheck
+#     TODO:   detekt not available for java 25 yet
+#  detekt:
+#    name: detekt
+#    runs-on: ubuntu-latest
+#    env:
+#      _JAVA_OPTIONS: "-Xmx3g"
+#      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v6
+#      - uses: actions/setup-java@v5
+#        with:
+#          distribution: 'temurin'
+#          java-version: 21
+#      - name: Set up Gradle
+#        uses: gradle/actions/setup-gradle@v5
+#      - name: Run detekt
+#        run: ./gradlew detekt
   kotlin_validate:
     name: Validate the kotlin
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/gradle_verify.yml@v2 # WORKFLOW_VERSION
@@ -49,6 +85,8 @@ jobs:
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2 # WORKFLOW_VERSION
     needs:
       - kotlin_validate
+      - ktlint-check
+#      - detekt
     with:
       docker_registry: 'ghcr.io'
       registry_org: 'ministryofjustice'
@@ -66,6 +104,8 @@ jobs:
       environment: 'dev'
       app_version: '${{ needs.build.outputs.app_version }}'
       slack_notification: 'false' # if 'true', it needs a valid NONPROD_RELEASES_SLACK_CHANNEL variable to be set
+
+
   # deploy_preprod:
   #   name: Deploy to pre-production environment
   #   needs:
