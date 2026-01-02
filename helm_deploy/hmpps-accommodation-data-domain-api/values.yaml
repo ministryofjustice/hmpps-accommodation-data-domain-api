@@ -28,7 +28,14 @@ generic-service:
   namespace_secrets:
     hmpps-accommodation-data-domain-api-application-insights:
       APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
-
+    hmpps-accommodation-data-domain-api:
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT-ID: "SYSTEM_CLIENT_ACCOMMODATION_DATA_DOMAIN_CLIENT_ID"
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_DEFAULT_CLIENT-SECRET: "SYSTEM_CLIENT_ACCOMMODATION_DATA_DOMAIN_CLIENT_SECRET"
+    accommodation-data-domain-rds-instance-output:
+      SPRING_DATASOURCE_USERNAME: "database_username"
+      SPRING_DATASOURCE_PASSWORD: "database_password"
+      DB_NAME: "database_name"
+      DB_ENDPOINT: "rds_instance_endpoint"
   allowlist:
     groups:
       - internal
