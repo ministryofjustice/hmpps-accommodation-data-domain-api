@@ -1,10 +1,6 @@
 package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.mock
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty
-import org.springframework.context.annotation.Condition
-import org.springframework.context.annotation.ConditionContext
 import org.springframework.context.annotation.Profile
-import org.springframework.core.type.AnnotatedTypeMetadata
 import org.springframework.http.ResponseEntity
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.access.prepost.PreAuthorize
