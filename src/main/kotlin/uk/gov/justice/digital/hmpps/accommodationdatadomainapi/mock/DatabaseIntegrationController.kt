@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class DatabaseIntegrationController(private val tableCountProbe: TableCountProbe) {
 
-  @PreAuthorize("permitAll()")
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_ACCOMMODATION_API__SINGLE_ACCOMMODATION_SERVICE')")
   @GetMapping("/db/table/count")
   fun getMockData() = ResponseEntity.ok("Current active tables in db: ${tableCountProbe.countTables()}")
 }
