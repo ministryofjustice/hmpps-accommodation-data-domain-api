@@ -10,6 +10,7 @@ generic-service:
     tlsSecretName: hmpps-accommodation-data-domain-api-dev-cert
 
   env:
+    SENTRY_ENVIRONMENT: dev
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: "applicationinsights.dev.json"
     HMPPS_AUTH_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
 
@@ -17,6 +18,9 @@ generic-service:
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
 generic-prometheus-alerts:
   alertSeverity: hmpps-approved-premises
+  rdsAlertsDatabases:
+    cloud-platform-ee73a780e019461c: 'Accommodation Data Domain'
+  rdsAlertsConnectionThreshold: 100 #TODO: Calculate an appropriate number. 100 is based on nothing.
 
 env_details:
   production_env: false

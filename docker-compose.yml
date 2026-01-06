@@ -1,33 +1,15 @@
 version: "3"
 services:
-  hmpps-accommodation-data-domain-api:
-    build:
-      context: .
+  localstack:
+    image: localstack/localstack
     networks:
       - hmpps
-    container_name: hmpps-accommodation-data-domain-api
+    container_name: localstack-data-domain
     ports:
-      - "8080:8080"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ping"]
+      - "4566:4566"
     environment:
-      - SERVER_PORT=8080
-      - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth
-      - SPRING_PROFILES_ACTIVE=dev
-
-  hmpps-auth:
-    image: ghcr.io/ministryofjustice/hmpps-auth:latest
-    networks:
-      - hmpps
-    container_name: hmpps-auth
-    ports:
-      - "8090:8080"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/auth/health"]
-    environment:
-      - SERVER_PORT=8080
-      - SPRING_PROFILES_ACTIVE=dev
-      - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
-
+      - SERVICES=sqs,sns
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
 networks:
   hmpps:
