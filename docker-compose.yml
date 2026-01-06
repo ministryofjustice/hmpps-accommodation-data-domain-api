@@ -11,19 +11,5 @@ services:
       - SERVICES=sqs,sns
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
-
-  postgres:
-    image: postgres:17.6 #the same version as our dev db.
-    networks:
-      - hmpps
-    container_name: accommodation-data-domain-db
-    restart: always
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_PASSWORD=acdd_db_password
-      - POSTGRES_USER=admin
-      - POSTGRES_DB=accommodation-data-domain-db
-
 networks:
   hmpps:
