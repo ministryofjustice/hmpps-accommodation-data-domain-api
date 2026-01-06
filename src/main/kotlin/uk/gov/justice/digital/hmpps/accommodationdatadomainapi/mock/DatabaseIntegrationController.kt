@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController
 
 @Profile(value = ["local", "dev"])
 @RestController
-class MockData(private val tableCountProbe: TableCountProbe) {
+class DatabaseIntegrationController(private val tableCountProbe: TableCountProbe) {
 
   @PreAuthorize("permitAll()")
-  @GetMapping("/db")
+  @GetMapping("/db/table/count")
   fun getMockData() = ResponseEntity.ok("Current active tables in db: ${tableCountProbe.countTables()}")
 }
 
