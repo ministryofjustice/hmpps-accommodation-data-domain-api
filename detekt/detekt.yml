@@ -1,0 +1,9 @@
+complexity:
+  LongMethod:
+    ignoreAnnotated:
+      - 'TestData'
+  LongParameterList:
+    active: true
+    ignoreAnnotated:
+      - 'Configuration'
+      - 'TestData'
