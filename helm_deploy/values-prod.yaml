@@ -2,14 +2,25 @@
 # Per environment values which override defaults in hmpps-accommodation-data-domain-api/values.yaml
 
 generic-service:
+  serviceAccountName: hmpps-community-accommodation-api-service-account
+  replicaCount: 4
+
   ingress:
     host: accommodation-data-domain-api.hmpps.service.justice.gov.uk
+    tlsSecretName: hmpps-accommodation-data-domain-api-prod-cert
 
   env:
     SENTRY_ENVIRONMENT: prod
+    APPLICATIONINSIGHTS_CONFIGURATION_FILE: "applicationinsights.json"
     HMPPS_AUTH_URL: "https://sign-in.hmpps.service.justice.gov.uk/auth"
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
 generic-prometheus-alerts:
   alertSeverity: hmpps-approved-premises
+  rdsAlertsDatabases:
+    cloud-platform-ee73a780e019461c: 'Accommodation Data Domain'
+  rdsAlertsConnectionThreshold: 100 #TODO: Calculate an appropriate number. 100 is based on nothing.
+
+env_details:
+  production_env: true
