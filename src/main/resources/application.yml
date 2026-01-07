@@ -13,7 +13,7 @@ spring:
       ddl-auto: none
 
   datasource:
-    url: jdbc:postgresql://${DB_ENDPOINT}/${DB_NAME}?sslmode=verify-full
+    url: jdbc:postgresql://${DB_ENDPOINT}/${DB_NAME}
 
     hikari:
       pool-name: Accommodation-Data-Domain-CP
