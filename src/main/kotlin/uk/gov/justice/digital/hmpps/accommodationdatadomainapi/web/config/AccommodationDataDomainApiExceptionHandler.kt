@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.config
+package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.web.config
 
 import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory

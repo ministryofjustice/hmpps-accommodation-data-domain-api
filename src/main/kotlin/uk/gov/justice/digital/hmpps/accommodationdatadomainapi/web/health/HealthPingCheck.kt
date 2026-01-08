@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:filename")
 
-package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.health
+package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.web.health
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component

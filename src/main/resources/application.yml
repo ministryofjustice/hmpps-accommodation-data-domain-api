@@ -14,7 +14,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://${DB_ENDPOINT}/${DB_NAME}
-
+    jpa:
+      database: postgresql
     hikari:
       pool-name: Accommodation-Data-Domain-CP
       connectionTimeout: 1000
