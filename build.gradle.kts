@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.3.0"
   kotlin("plugin.spring") version "2.3.0"
+  id("io.gitlab.arturbosch.detekt") version "1.23.8"
 }
 
 dependencies {
@@ -26,8 +29,35 @@ kotlin {
   }
 }
 
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+  jvmTarget = "21"
+}
+
+configurations.matching { it.name == "detekt" }.all {
+  resolutionStrategy.eachDependency {
+    if (requested.group == "org.jetbrains.kotlin") {
+      useVersion(io.gitlab.arturbosch.detekt.getSupportedKotlinVersion())
+    }
+  }
+}
+
+detekt {
+  config.setFrom("detekt/detekt.yml")
+}
+
 tasks {
-  withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+  withType<KotlinCompile> {
     compilerOptions.jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25
+  }
+}
+
+buildscript {
+  repositories {
+    maven {
+      url = uri("https://central.sonatype.com/repository/maven-snapshots/")
+    }
+  }
+  dependencies {
+    classpath("dev.detekt:detekt-gradle-plugin:main-SNAPSHOT")
   }
 }
