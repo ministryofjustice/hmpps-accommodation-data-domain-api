@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.mock
+package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.web.mock
 
 import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseEntity

@@ -1,4 +1,3 @@
-version: "3"
 services:
   localstack:
     image: localstack/localstack
@@ -7,9 +6,33 @@ services:
     container_name: localstack-data-domain
     ports:
       - "4566:4566"
+      - "4571:4571"
+      - "8999:8080"
     environment:
-      - SERVICES=sqs,sns
+      - SERVICES=sns,sqs
+      - DEBUG=${DEBUG- }
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DEFAULT_REGION=eu-west-2
     volumes:
-      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "${TMPDIR:-/tmp/localstack}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  postgres:
+    image: "postgis/postgis:14-3.5"
+    platform: linux/amd64
+    container_name: sas-postgres
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:UseSVE=0
+      - POSTGRES_USER=sas_user
+      - POSTGRES_PASSWORD=sas_psw
+      - POSTGRES_DB=sas_db
+    volumes:
+      - sas-postgres-data-api:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+volumes:
+  sas-postgres-data-api:
+
 networks:
   hmpps:

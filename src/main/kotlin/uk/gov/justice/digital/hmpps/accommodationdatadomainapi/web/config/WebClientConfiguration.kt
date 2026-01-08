@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.config
+package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.web.config
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

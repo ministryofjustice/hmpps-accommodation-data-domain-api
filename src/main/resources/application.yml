@@ -14,7 +14,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://${DB_ENDPOINT}/${DB_NAME}
-
+    jpa:
+      database: postgresql
     hikari:
       pool-name: Accommodation-Data-Domain-CP
       connectionTimeout: 1000
@@ -48,6 +49,23 @@ spring:
   http:
     codecs:
       max-in-memory-size: 10MB
+
+event:
+  details-url:
+    proposed-accommodation-approved: http://localhost:8090/proposed-accommodation/#id
+    proposed-accommodation-unapproved: http://localhost:8090/proposed-accommodation/#id
+
+hmpps.sqs:
+  useWebToken: false
+  provider: localstack
+  topics:
+    domainevents:
+      arn: arn:aws:sns:eu-west-2:000000000000:domainevents
+  queues:
+    addadomaineventsqueue:
+      dlqName: ${random.uuid}
+      queueName: ${random.uuid}
+      subscribeTopicId: domainevents
 
 server:
   port: 8080
