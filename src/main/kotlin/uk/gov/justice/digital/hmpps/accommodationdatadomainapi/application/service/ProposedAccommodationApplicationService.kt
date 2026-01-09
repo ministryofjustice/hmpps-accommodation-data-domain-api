@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.application.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.databind.json.JsonMapper
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.application.exceptions.NotFoundException
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.application.mapper.ProposedAccommodationMapper
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.aggregate.ProposedAccommodationAggregate
@@ -17,7 +17,7 @@ import java.util.UUID
 
 @Service
 class ProposedAccommodationApplicationService(
-  private val objectMapper: ObjectMapper,
+  private val jsonMapper: JsonMapper,
   private val proposedAccommodationRepository: ProposedAccommodationRepository,
   private val outboxEventRepository: OutboxEventRepository,
 ) {
@@ -49,7 +49,7 @@ class ProposedAccommodationApplicationService(
           aggregateId = event.aggregateId,
           aggregateType = "ProposedAccommodation",
           domainEventType = event.type.name,
-          payload = objectMapper.writeValueAsString(event),
+          payload = jsonMapper.writeValueAsString(event),
           createdAt = Instant.now(),
           processedStatus = ProcessedStatus.PENDING,
           processedAt = null,

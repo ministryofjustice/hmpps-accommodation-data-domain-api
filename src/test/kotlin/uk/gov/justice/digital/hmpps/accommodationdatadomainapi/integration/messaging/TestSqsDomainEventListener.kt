@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.messaging
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.awspring.cloud.sqs.annotation.SqsListener
 import org.junit.jupiter.api.Assertions.fail
 import org.slf4j.LoggerFactory
@@ -8,13 +7,14 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.test.context.event.annotation.BeforeTestMethod
+import tools.jackson.databind.json.JsonMapper
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsSnsDomainEvent
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.OutgoingHmppsDomainEventType
 import java.time.Duration
 
 @Profile("test")
 @Service
-class TestSqsDomainEventListener(private val objectMapper: ObjectMapper) {
+class TestSqsDomainEventListener(private val jsonMapper: JsonMapper) {
   private val log = LoggerFactory.getLogger(this::class.java)
   private val messages = mutableListOf<HmppsSnsDomainEvent>()
 
@@ -23,8 +23,8 @@ class TestSqsDomainEventListener(private val objectMapper: ObjectMapper) {
 
   @SqsListener(queueNames = ["test-domain-events-queue"], factory = "hmppsQueueContainerFactoryProxy", pollTimeoutSeconds = "1")
   fun processMessage(rawMessage: String?) {
-    val (message) = objectMapper.readValue(rawMessage, Message::class.java)
-    val event = objectMapper.readValue(message, HmppsSnsDomainEvent::class.java)
+    val (message) = jsonMapper.readValue(rawMessage, Message::class.java)
+    val event = jsonMapper.readValue(message, HmppsSnsDomainEvent::class.java)
 
     log.info("Received Domain Event: $event")
     synchronized(messages) {

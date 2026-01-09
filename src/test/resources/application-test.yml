@@ -8,6 +8,12 @@ management.endpoint:
 hmpps-auth:
   url: "http://localhost:8090/auth"
 
+service:
+  probation-integration-delius:
+    base-url: http://localhost:9990
+  core-person-record:
+    base-url: https://localhost:9990
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/adda_db
