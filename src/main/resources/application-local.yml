@@ -2,7 +2,7 @@ hmpps-auth:
   url: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
 
 server:
-  port: 8090
+  port: 9010
 
 spring:
   datasource:
