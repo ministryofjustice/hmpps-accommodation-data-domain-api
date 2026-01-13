@@ -1,12 +1,14 @@
 package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration
 
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.servlet.client.RestTestClient
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.wiremock.HmppsAuthApiExtension
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.wiremock.HmppsAuthApiExtension.Companion.hmppsAuth
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
@@ -16,11 +18,18 @@ import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 @ActiveProfiles("test")
 abstract class IntegrationTestBase {
 
-  @Autowired
-  protected lateinit var webTestClient: WebTestClient
+  @LocalServerPort
+  protected lateinit var port: Integer
 
   @Autowired
   protected lateinit var jwtAuthHelper: JwtAuthorisationHelper
+
+  protected lateinit var client: RestTestClient
+
+  @BeforeEach
+  fun setupBase() {
+    client = RestTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+  }
 
   internal fun setAuthorisation(
     username: String? = "AUTH_ADM",
