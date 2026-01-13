@@ -19,6 +19,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.11")
+  implementation("org.springframework.boot:spring-boot-restclient")
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.8.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.8.0")
 
