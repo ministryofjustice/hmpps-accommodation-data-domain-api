@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
+import org.springframework.web.client.toEntity
 
 // HMPPS Auth health ping is required if your service calls HMPPS Auth to get a token to call other services
 @Component("hmppsAuth")
@@ -21,7 +22,7 @@ private fun RestClient.ping(): Health = try {
   val response = get()
     .uri("/health/ping")
     .retrieve()
-    .toEntity(String::class.java)
+    .toEntity<String>()
 
   Health.up()
     .withDetail("HttpStatus", response.statusCode)
