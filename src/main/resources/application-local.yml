@@ -1,6 +1,9 @@
 hmpps-auth:
   url: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
 
+service:
+  probation-integration-delius:
+    base-url: https://approved-premises-and-delius-dev.hmpps.service.justice.gov.uk
 
 spring:
   datasource:
