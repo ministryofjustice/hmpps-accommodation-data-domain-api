@@ -10,8 +10,5 @@ interface ProbationIntegrationDeliusClient {
 
 @Service
 class ProbationIntegrationService(private val probationIntegrationDeliusClient: ProbationIntegrationDeliusClient) {
-  fun getInfoResponse(): String {
-    val response = probationIntegrationDeliusClient.getInfo()
-    return response
-  }
+  fun getInfoResponse(): String = probationIntegrationDeliusClient.getInfo()
 }
