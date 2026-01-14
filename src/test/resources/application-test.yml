@@ -20,7 +20,17 @@ event:
     proposed-accommodation-unapproved: http://api-host/proposed-accommodation/#id
 
 hmpps.sqs:
+  useWebToken: false
+  provider: localstack
+  topics:
+    domainevents:
+      arn: arn:aws:sns:eu-west-2:000000000000:domainevents
   queues:
+    addadomaineventsqueue:
+      queueName: adda_domain_events_queue
+      dlqName: adda_domain_events_dlq
+      subscribeTopicId: domainevents
+      subscribeFilter: '{"eventType":["adda.proposed.accommodation.approved", "adda.proposed.accommodation.unapproved"]}'
     testdomaineventsqueue:
       dlqName: ${random.uuid}
       queueName: ${random.uuid}

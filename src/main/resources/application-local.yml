@@ -9,3 +9,17 @@ spring:
     url: jdbc:postgresql://localhost:5432/sas_db
     username: sas_user
     password: sas_psw
+
+hmpps.sqs:
+  useWebToken: false
+  provider: localstack
+  topics:
+    domainevents:
+      arn: arn:aws:sns:eu-west-2:000000000000:domainevents
+  queues:
+    addadomaineventsqueue:
+      queueName: adda_domain_events_queue
+      dlqName: adda_domain_events_dlq
+      subscribeTopicId: domainevents
+      subscribeFilter: '{"eventType":["adda.proposed.accommodation.approved", "adda.proposed.accommodation.unapproved"]}'
+
