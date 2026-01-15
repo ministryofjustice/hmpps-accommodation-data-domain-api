@@ -80,9 +80,9 @@ jobs:
     with:
       localstack-tag: 4
       postgres-tag: 18
-      postgres-username: sas_user
-      postgres-password: sas_psw
-      postgres-db: sas_db
+      postgres-username: adda_user
+      postgres-password: adda_psw
+      postgres-db: adda_db
     secrets: inherit
   build:
     name: Build docker image from hmpps-github-actions

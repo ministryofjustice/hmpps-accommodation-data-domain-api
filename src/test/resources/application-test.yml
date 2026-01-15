@@ -10,9 +10,9 @@ hmpps-auth:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/sas_db
-    username: sas_user
-    password: sas_psw
+    url: jdbc:postgresql://localhost:5432/adda_db
+    username: adda_user
+    password: adda_psw
 
 event:
   details-url:
