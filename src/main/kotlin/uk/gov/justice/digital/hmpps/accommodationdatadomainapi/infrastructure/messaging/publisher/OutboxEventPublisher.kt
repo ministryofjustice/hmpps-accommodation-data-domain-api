@@ -18,6 +18,7 @@ import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import uk.gov.justice.hmpps.sqs.MissingTopicException
 import java.time.ZoneOffset
 
+// @Profile(value = ["local", "dev"])
 @Component
 class OutboxEventPublisher(
   private val objectMapper: ObjectMapper,
@@ -28,7 +29,7 @@ class OutboxEventPublisher(
   private val log = LoggerFactory.getLogger(this::class.java)
 
   private val domainTopic by lazy {
-    hmppsQueueService.findByTopicId("domainevents") ?: throw MissingTopicException("domainevents topic not found")
+    hmppsQueueService.findByTopicId("hmpps-domain-event-topic") ?: throw MissingTopicException("hmpps-domain-event-topic topic not found")
   }
 
   @Scheduled(fixedDelay = 5000)

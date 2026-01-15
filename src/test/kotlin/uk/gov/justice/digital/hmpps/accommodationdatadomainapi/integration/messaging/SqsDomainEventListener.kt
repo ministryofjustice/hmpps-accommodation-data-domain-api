@@ -11,15 +11,16 @@ import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.me
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsSnsDomainEvent
 import java.time.Duration
 
+// @Profile("test")
 @Service
 class SqsDomainEventListener(private val objectMapper: ObjectMapper) {
   private val log = LoggerFactory.getLogger(this::class.java)
   private val messages = mutableListOf<HmppsSnsDomainEvent>()
 
-  @Value("\${hmpps.sqs.topics.domainevents.arn}")
+  @Value("\${hmpps.sqs.topics.hmpps-domain-event-topic.arn}")
   lateinit var topicName: String
 
-  @SqsListener(queueNames = ["test-domain-events-queue"], factory = "hmppsQueueContainerFactoryProxy", pollTimeoutSeconds = "1")
+  @SqsListener(queueNames = ["adda-domain-events-queue"], factory = "hmppsQueueContainerFactoryProxy", pollTimeoutSeconds = "1")
   fun processMessage(rawMessage: String?) {
     val (message) = objectMapper.readValue(rawMessage, Message::class.java)
     val event = objectMapper.readValue(message, HmppsSnsDomainEvent::class.java)
