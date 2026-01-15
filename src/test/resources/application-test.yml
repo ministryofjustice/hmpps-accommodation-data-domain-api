@@ -10,9 +10,28 @@ hmpps-auth:
 
 spring:
   datasource:
-    url: jdbc:h2:mem:mydb
-    username: sa
-    password: password
-    driverClassName: org.h2.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    url: jdbc:postgresql://localhost:5432/sas_db
+    username: sas_user
+    password: sas_psw
+
+event:
+  details-url:
+    proposed-accommodation-approved: http://api-host/proposed-accommodation/#id
+    proposed-accommodation-unapproved: http://api-host/proposed-accommodation/#id
+
+hmpps.sqs:
+  useWebToken: false
+  provider: localstack
+  topics:
+    domainevents:
+      arn: arn:aws:sns:eu-west-2:000000000000:domainevents
+  queues:
+    addadomaineventsqueue:
+      queueName: adda_domain_events_queue
+      dlqName: adda_domain_events_dlq
+      subscribeTopicId: domainevents
+      subscribeFilter: '{"eventType":["adda.proposed.accommodation.approved", "adda.proposed.accommodation.unapproved"]}'
+    testdomaineventsqueue:
+      dlqName: ${random.uuid}
+      queueName: ${random.uuid}
+      subscribeTopicId: domainevents

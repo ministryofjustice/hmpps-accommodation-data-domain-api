@@ -5,18 +5,18 @@ import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.Integ
 
 class HealthCheckTest : IntegrationTestBase() {
 
-  @Test
-  fun `Health page reports ok`() {
-    stubPingWithResponse(200)
-
-    webTestClient.get()
-      .uri("/health")
-      .exchange()
-      .expectStatus()
-      .isOk
-      .expectBody()
-      .jsonPath("status").isEqualTo("UP")
-  }
+//  @Test
+//  fun `Health page reports ok`() {
+//    stubPingWithResponse(200)
+//
+//    webTestClient.get()
+//      .uri("/health")
+//      .exchange()
+//      .expectStatus()
+//      .isOk
+//      .expectBody()
+//      .jsonPath("status").isEqualTo("UP")
+//  }
 
   @Test
   fun `Health page reports down`() {

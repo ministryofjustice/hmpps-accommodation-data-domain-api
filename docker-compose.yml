@@ -1,15 +1,33 @@
-version: "3"
 services:
   localstack:
-    image: localstack/localstack
+    image: localstack/localstack:4
     networks:
       - hmpps
     container_name: localstack-data-domain
     ports:
       - "4566:4566"
+      - "4571:4571"
     environment:
-      - SERVICES=sqs,sns
+      - SERVICES=sns,sqs
+      - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
-      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - ${TMPDIR:-/tmp/localstack}:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  postgres:
+    image: postgres:18
+    container_name: sas-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=sas_user
+      - POSTGRES_PASSWORD=sas_psw
+      - POSTGRES_DB=sas_db
+    volumes:
+      - sas-postgres-data-api:/var/lib/postgresql
+
+volumes:
+  sas-postgres-data-api:
+
 networks:
   hmpps:
