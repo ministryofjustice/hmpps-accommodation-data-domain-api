@@ -26,12 +26,12 @@ hmpps.sqs:
     domainevents:
       arn: arn:aws:sns:eu-west-2:000000000000:domainevents
   queues:
-    addadomaineventsqueue:
+    adda-domain-events-queue:
       queueName: adda_domain_events_queue
       dlqName: adda_domain_events_dlq
       subscribeTopicId: domainevents
       subscribeFilter: '{"eventType":["adda.proposed.accommodation.approved", "adda.proposed.accommodation.unapproved"]}'
-    testdomaineventsqueue:
+    test-domain-events-queue:
       dlqName: ${random.uuid}
       queueName: ${random.uuid}
       subscribeTopicId: domainevents

@@ -26,10 +26,10 @@ generic-service:
   #     [name of environment variable as seen by app]: [key of kubernetes secret to load]
 
   namespace_secrets:
-    adda_domain_events_queue:
-      HMPPS_SQS_QUEUES_ADDADOMAINEVENTSQUEUE_QUEUENAME: "QUEUE_NAME"
-    adda_domain_events_dlq:
-      HMPPS_SQS_QUEUES_ADDADOMAINEVENTSQUEUE_DLQNAME: "QUEUE_NAME"
+    adda-domain-events-queue-secret:
+      HMPPS_SQS_QUEUES_ADDA-DOMAIN-EVENTS-QUEUE_QUEUENAME: "QUEUE_NAME"
+    adda-domain-events-dlq-secret:
+      HMPPS_SQS_QUEUES_ADDA-DOMAIN-EVENTS-DLQ_DLQNAME: "QUEUE_NAME"
     hmpps-accommodation-data-domain-api-application-insights:
       APPLICATIONINSIGHTS_CONNECTION_STRING: "APPLICATIONINSIGHTS_CONNECTION_STRING"
     hmpps-accommodation-data-domain-api:
