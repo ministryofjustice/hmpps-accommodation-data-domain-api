@@ -15,7 +15,7 @@ class ProposedAccommodationUpdatedListener(
 ) {
   private val log = LoggerFactory.getLogger(this::class.java)
 
-  @SqsListener("addadomaineventsqueue", factory = "hmppsQueueContainerFactoryProxy")
+  @SqsListener("adda-domain-events-queue", factory = "hmppsQueueContainerFactoryProxy")
   fun processMessage(msg: String) {
     try {
       val (message) = objectMapper.readValue<SQSMessage>(msg)
@@ -31,6 +31,7 @@ class ProposedAccommodationUpdatedListener(
     when (event.eventType) {
       HmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_APPROVED.typeName ->
         log.info("Proposed Accommodation Approved -- Event received and occurred-at: ${event.occurredAt}. Event detailUrl: ${event.detailUrl}")
+
       HmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_UNAPPROVED.typeName ->
         log.info("Proposed Accommodation Unapproved -- Event received and occurred-at: ${event.occurredAt}. Event detailUrl: ${event.detailUrl}")
     }
