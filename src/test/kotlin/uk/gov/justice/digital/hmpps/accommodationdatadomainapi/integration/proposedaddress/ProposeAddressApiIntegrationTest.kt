@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.event.AccommodationDataDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.OutgoingHmppsDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProcessedStatus
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProposedAccommodationEntity
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.assertions.assertThatJson
@@ -50,13 +51,13 @@ class ProposeAddressApiIntegrationTest : IntegrationTestBase() {
   @WithMockAuthUser(roles = ["ROLE_PROBATION"])
   @Test
   fun `should get proposed-accommodation by id`() {
-    val result = mockMvc.perform(get("/proposed-accommodation/$proposedAccommodationId"))
-      .andExpect(status().isOk)
-      .andReturn()
-      .response
-      .contentAsString
-
-    assertThatJson(result).matchesExpectedJson(expectedProposedAddressesResponseBody(proposedAccommodationId))
+    client.get().uri("/proposed-accommodation/$proposedAccommodationId")
+      .exchange()
+      .expectStatus().isOk
+      .expectBody(String::class.java)
+      .value {
+        assertThatJson(it!!).matchesExpectedJson(expectedProposedAddressesResponseBody(proposedAccommodationId))
+      }
   }
 
   @WithMockAuthUser(roles = ["ROLE_PROBATION"])
