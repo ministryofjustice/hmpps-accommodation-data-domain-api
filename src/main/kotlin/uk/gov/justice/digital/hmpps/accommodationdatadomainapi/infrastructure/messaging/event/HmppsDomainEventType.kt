@@ -9,7 +9,7 @@ enum class HmppsDomainEventType(
     "The proposed accommodation has been approved",
   ),
   ADDA_PROPOSED_ACCOMMODATION_UNAPPROVED(
-  "adda.proposed.accommodation.unapproved",
+    "adda.proposed.accommodation.unapproved",
     "The proposed accommodation have been unapproved",
   ),
 }
