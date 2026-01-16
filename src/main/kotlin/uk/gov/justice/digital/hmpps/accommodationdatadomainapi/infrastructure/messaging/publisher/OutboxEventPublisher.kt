@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.m
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -18,7 +19,7 @@ import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import uk.gov.justice.hmpps.sqs.MissingTopicException
 import java.time.ZoneOffset
 
-// @Profile(value = ["local", "dev"])
+@Profile(value = ["local", "dev"])
 @Component
 class OutboxEventPublisher(
   private val objectMapper: ObjectMapper,
