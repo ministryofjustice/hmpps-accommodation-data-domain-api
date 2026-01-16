@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.me
 
 @Profile(value = ["local", "dev", "test"])
 @Component
-class ProposedAccommodationUpdatedListener(
+class HmppsDomainEventListener(
   private val objectMapper: ObjectMapper,
 ) {
   private val log = LoggerFactory.getLogger(this::class.java)

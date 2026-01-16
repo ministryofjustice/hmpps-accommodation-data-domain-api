@@ -14,7 +14,7 @@ import java.time.Duration
 
 @Profile("test")
 @Service
-class SqsDomainEventListener(private val objectMapper: ObjectMapper) {
+class TestSqsDomainEventListener(private val objectMapper: ObjectMapper) {
   private val log = LoggerFactory.getLogger(this::class.java)
   private val messages = mutableListOf<HmppsSnsDomainEvent>()
 
