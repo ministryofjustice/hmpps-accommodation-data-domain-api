@@ -11,7 +11,7 @@ import software.amazon.awssdk.services.sns.model.PublishRequest
 import software.amazon.awssdk.services.sns.model.PublishResponse
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.event.AccommodationDataDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.config.HmppsDomainEventUrlConfig
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsDomainEventType
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.OutgoingHmppsDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsSnsDomainEvent
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.OutboxEventEntity
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.OutboxEventRepository
@@ -44,12 +44,12 @@ class OutboxEventPublisher(
     }
     outboxEventsToPublish.forEach {
       val accommodationDataDomainEventType = AccommodationDataDomainEventType.from(it.domainEventType)!!
-      val hmppsDomainEventType = when (accommodationDataDomainEventType) {
-        AccommodationDataDomainEventType.PROPOSED_ACCOMMODATION_APPROVED -> HmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_APPROVED
-        AccommodationDataDomainEventType.PROPOSED_ACCOMMODATION_UNAPPROVED -> HmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_UNAPPROVED
+      val outgoingHmppsDomainEventType = when (accommodationDataDomainEventType) {
+        AccommodationDataDomainEventType.PROPOSED_ACCOMMODATION_APPROVED -> OutgoingHmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_APPROVED
+        AccommodationDataDomainEventType.PROPOSED_ACCOMMODATION_UNAPPROVED -> OutgoingHmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_UNAPPROVED
       }
-      val publishResult = publishHmppsDomainEvent(outboxEventEntity = it, hmppsDomainEventType)
-      log.info("Emitted SNS event (Message Id: ${publishResult.messageId()}, Sequence Id: ${publishResult.sequenceNumber()}) for Outbox Event: ${it.id} of type: $hmppsDomainEventType")
+      val publishResult = publishHmppsDomainEvent(outboxEventEntity = it, outgoingHmppsDomainEventType)
+      log.info("Emitted SNS event (Message Id: ${publishResult.messageId()}, Sequence Id: ${publishResult.sequenceNumber()}) for Outbox Event: ${it.id} of type: $outgoingHmppsDomainEventType")
       outboxEventRepository.save(
         it.copy(processed = true),
       )
@@ -58,13 +58,13 @@ class OutboxEventPublisher(
 
   private fun publishHmppsDomainEvent(
     outboxEventEntity: OutboxEventEntity,
-    hmppsDomainEventType: HmppsDomainEventType,
+    outgoingHmppsDomainEventType: OutgoingHmppsDomainEventType,
   ): PublishResponse {
-    val detailUrl = hmppsDomainEventUrlConfig.getUrlForDomainEventId(hmppsDomainEventType, outboxEventEntity.aggregateId)
+    val detailUrl = hmppsDomainEventUrlConfig.getUrlForDomainEventId(outgoingHmppsDomainEventType, outboxEventEntity.aggregateId)
     val snsEvent = HmppsSnsDomainEvent(
-      eventType = hmppsDomainEventType.typeName,
+      eventType = outgoingHmppsDomainEventType.typeName,
       version = 1,
-      description = hmppsDomainEventType.typeDescription,
+      description = outgoingHmppsDomainEventType.typeDescription,
       detailUrl = detailUrl,
       occurredAt = outboxEventEntity.createdAt.atOffset(ZoneOffset.UTC),
     )

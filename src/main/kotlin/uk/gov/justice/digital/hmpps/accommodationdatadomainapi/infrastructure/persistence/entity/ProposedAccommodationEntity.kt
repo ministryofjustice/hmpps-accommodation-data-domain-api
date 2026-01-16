@@ -13,6 +13,8 @@ data class ProposedAccommodationEntity(
   @Id
   val id: UUID,
   @Column
+  val crn: String,
+  @Column
   var address: String,
   @Column
   var approved: Boolean?,

@@ -1,25 +1,26 @@
 package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.application.mapper
 
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.aggregate.ProposedAccommodationAggregate
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.aggregate.ProposedAccommodationAggregate.ProposedAccommodationSnapshot
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProposedAccommodationEntity
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.web.dto.ProposedAccommodationDto
 
 object ProposedAccommodationMapper {
 
-  fun toAggregate(entity: ProposedAccommodationEntity): ProposedAccommodationAggregate = ProposedAccommodationAggregate.hydrate(
+  fun toAggregate(entity: ProposedAccommodationEntity): ProposedAccommodationAggregate = ProposedAccommodationAggregate.rehydrate(
     id = entity.id,
+    crn = entity.crn,
     address = entity.address,
     approved = entity.approved,
     createdAt = entity.createdAt,
     lastUpdatedAt = entity.lastUpdatedAt,
   )
 
-  fun toEntity(aggregate: ProposedAccommodationAggregate): ProposedAccommodationEntity {
-    val snapshot = aggregate.snapshot()
-
+  fun toEntity(snapshot: ProposedAccommodationSnapshot): ProposedAccommodationEntity {
     return ProposedAccommodationEntity(
       id = snapshot.id,
-      address = snapshot.address,
+      crn = snapshot.crn,
+      address = snapshot.address!!,
       approved = snapshot.approved,
       createdAt = snapshot.createdAt,
       lastUpdatedAt = snapshot.lastUpdatedAt,
@@ -31,7 +32,7 @@ object ProposedAccommodationMapper {
 
     return ProposedAccommodationDto(
       id = snapshot.id,
-      address = snapshot.address,
+      address = snapshot.address!!,
       approved = snapshot.approved,
     )
   }

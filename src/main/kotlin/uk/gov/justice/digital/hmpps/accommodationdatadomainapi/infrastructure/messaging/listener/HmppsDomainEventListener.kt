@@ -7,13 +7,17 @@ import io.awspring.cloud.sqs.annotation.SqsListener
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsSnsDomainEvent
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.InboxEventEntity
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.InboxEventRepository
+import java.time.Instant
+import java.util.UUID
 
 @Profile(value = ["local", "dev", "test"])
 @Component
 class HmppsDomainEventListener(
   private val objectMapper: ObjectMapper,
+  private val inboxEventRepository: InboxEventRepository,
 ) {
   private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -22,20 +26,20 @@ class HmppsDomainEventListener(
     try {
       val (message) = objectMapper.readValue<SQSMessage>(msg)
       val event = objectMapper.readValue<HmppsSnsDomainEvent>(message)
-      handleEvent(event)
+      inboxEventRepository.save(
+        InboxEventEntity(
+          id = UUID.randomUUID(),
+          eventType = event.eventType,
+          eventVersion = event.version,
+          eventDescription = event.description,
+          eventDetailUrl = event.detailUrl,
+          eventOccurredAt = event.occurredAt,
+          createdAt = Instant.now(),
+        )
+      )
     } catch (e: Exception) {
       log.error("Exception caught in ProposedAccommodationUpdatedListener", e)
       throw e
-    }
-  }
-
-  private fun handleEvent(event: HmppsSnsDomainEvent) {
-    when (event.eventType) {
-      HmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_APPROVED.typeName ->
-        log.info("Proposed Accommodation Approved -- Event received and occurred-at: ${event.occurredAt}. Event detailUrl: ${event.detailUrl}")
-
-      HmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_UNAPPROVED.typeName ->
-        log.info("Proposed Accommodation Unapproved -- Event received and occurred-at: ${event.occurredAt}. Event detailUrl: ${event.detailUrl}")
     }
   }
 

@@ -5,23 +5,22 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.time.Instant
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Entity
-@Table(name = "outbox_event")
-data class OutboxEventEntity(
+@Table(name = "inbox_event")
+class InboxEventEntity(
   @Id
   val id: UUID,
   @Column
-  val aggregateId: UUID,
+  val eventType: String,
   @Column
-  val aggregateType: String,
+  val eventDetailUrl: String?,
   @Column
-  val domainEventType: String,
-  @Column
-  val payload: String,
+  val eventOccurredAt: OffsetDateTime,
   @Column
   val createdAt: Instant,
-  @Column
-  val processed: Boolean = false,
+  @Column(nullable = false)
+  var processed: Boolean = false
 )

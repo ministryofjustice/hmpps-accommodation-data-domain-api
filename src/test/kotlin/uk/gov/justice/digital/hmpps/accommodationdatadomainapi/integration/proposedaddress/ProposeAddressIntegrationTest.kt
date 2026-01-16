@@ -8,7 +8,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsDomainEventType
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.OutgoingHmppsDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProposedAccommodationEntity
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.assertions.assertThatJson
@@ -25,6 +25,7 @@ class ProposeAddressIntegrationTest : IntegrationTestBase() {
   lateinit var testSqsDomainEventListener: TestSqsDomainEventListener
 
   private val proposedAccommodationId: UUID = UUID.randomUUID()
+  private val crn: String = "X123456"
 
   @BeforeEach
   fun setup() {
@@ -34,7 +35,8 @@ class ProposeAddressIntegrationTest : IntegrationTestBase() {
     hmppsAuth.stubGrantToken()
     proposedAccommodationRepository.save(
       ProposedAccommodationEntity(
-        proposedAccommodationId,
+        id = proposedAccommodationId,
+        crn = crn,
         address = "13 Test way, London. W5 9GF",
         approved = null,
         createdAt = Instant.now(),
@@ -72,14 +74,14 @@ class ProposeAddressIntegrationTest : IntegrationTestBase() {
 
     assertPublishedSNSEvent(
       proposedAccommodationId,
-      eventType = HmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_APPROVED,
-      eventDescription = HmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_APPROVED.typeDescription,
+      eventType = OutgoingHmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_APPROVED,
+      eventDescription = OutgoingHmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_APPROVED.typeDescription,
     )
   }
 
   private fun assertPublishedSNSEvent(
     proposedAccommodationId: UUID,
-    eventType: HmppsDomainEventType,
+    eventType: OutgoingHmppsDomainEventType,
     eventDescription: String,
     detailUrl: String = "http://api-host/proposed-accommodation",
   ) {
