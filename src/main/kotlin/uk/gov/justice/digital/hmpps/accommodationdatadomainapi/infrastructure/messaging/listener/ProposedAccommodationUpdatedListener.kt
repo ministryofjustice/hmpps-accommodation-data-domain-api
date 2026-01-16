@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsSnsDomainEvent
 
-@Profile(value = ["local", "dev"])
+@Profile(value = ["local", "dev", "test"])
 @Component
 class ProposedAccommodationUpdatedListener(
   private val objectMapper: ObjectMapper,

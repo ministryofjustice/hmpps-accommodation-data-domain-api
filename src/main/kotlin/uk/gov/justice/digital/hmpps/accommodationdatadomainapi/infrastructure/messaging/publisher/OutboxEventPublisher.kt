@@ -19,7 +19,7 @@ import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import uk.gov.justice.hmpps.sqs.MissingTopicException
 import java.time.ZoneOffset
 
-@Profile(value = ["local", "dev"])
+@Profile(value = ["local", "dev", "test"])
 @Component
 class OutboxEventPublisher(
   private val objectMapper: ObjectMapper,

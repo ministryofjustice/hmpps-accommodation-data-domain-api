@@ -21,7 +21,7 @@ class SqsDomainEventListener(private val objectMapper: ObjectMapper) {
   @Value("\${hmpps.sqs.topics.hmpps-domain-event-topic.arn}")
   lateinit var topicName: String
 
-  @SqsListener(queueNames = ["adda-domain-events-queue"], factory = "hmppsQueueContainerFactoryProxy", pollTimeoutSeconds = "1")
+  @SqsListener(queueNames = ["test-domain-events-queue"], factory = "hmppsQueueContainerFactoryProxy", pollTimeoutSeconds = "1")
   fun processMessage(rawMessage: String?) {
     val (message) = objectMapper.readValue(rawMessage, Message::class.java)
     val event = objectMapper.readValue(message, HmppsSnsDomainEvent::class.java)
