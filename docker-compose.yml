@@ -16,18 +16,18 @@ services:
 
   postgres:
     image: postgres:18
-    container_name: sas-postgres
+    container_name: adda-postgres
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=sas_user
-      - POSTGRES_PASSWORD=sas_psw
-      - POSTGRES_DB=sas_db
+      - POSTGRES_USER=adda_user
+      - POSTGRES_PASSWORD=adda_psw
+      - POSTGRES_DB=adda_db
     volumes:
-      - sas-postgres-data-api:/var/lib/postgresql
+      - adda-postgres-data-api:/var/lib/postgresql
 
 volumes:
-  sas-postgres-data-api:
+  adda-postgres-data-api:
 
 networks:
   hmpps:

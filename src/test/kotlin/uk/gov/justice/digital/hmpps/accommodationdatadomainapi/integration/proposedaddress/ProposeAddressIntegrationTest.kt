@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.prop
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
@@ -11,6 +12,7 @@ import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.me
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProposedAccommodationEntity
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.assertions.assertThatJson
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.messaging.TestSqsDomainEventListener
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.expectedProposedAddressesResponseBody
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.proposedAddressesRequestBody
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.wiremock.HmppsAuthApiExtension.Companion.hmppsAuth
@@ -19,6 +21,9 @@ import java.time.Instant
 import java.util.UUID
 
 class ProposeAddressIntegrationTest : IntegrationTestBase() {
+  @Autowired
+  lateinit var testSqsDomainEventListener: TestSqsDomainEventListener
+
   private val proposedAccommodationId: UUID = UUID.randomUUID()
 
   @BeforeEach
@@ -78,7 +83,7 @@ class ProposeAddressIntegrationTest : IntegrationTestBase() {
     eventDescription: String,
     detailUrl: String = "http://api-host/proposed-accommodation",
   ) {
-    val emittedMessage = sqsDomainEventListener.blockForMessage(eventType)
+    val emittedMessage = testSqsDomainEventListener.blockForMessage(eventType)
     assertThat(emittedMessage.description).isEqualTo(eventDescription)
     assertThat(emittedMessage.detailUrl).isEqualTo("$detailUrl/$proposedAccommodationId")
   }

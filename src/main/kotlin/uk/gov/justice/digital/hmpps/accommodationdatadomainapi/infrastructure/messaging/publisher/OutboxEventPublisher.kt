@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.m
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -18,6 +19,7 @@ import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import uk.gov.justice.hmpps.sqs.MissingTopicException
 import java.time.ZoneOffset
 
+@Profile(value = ["local", "dev", "test"])
 @Component
 class OutboxEventPublisher(
   private val objectMapper: ObjectMapper,
@@ -28,7 +30,7 @@ class OutboxEventPublisher(
   private val log = LoggerFactory.getLogger(this::class.java)
 
   private val domainTopic by lazy {
-    hmppsQueueService.findByTopicId("domainevents") ?: throw MissingTopicException("domainevents topic not found")
+    hmppsQueueService.findByTopicId("hmpps-domain-event-topic") ?: throw MissingTopicException("hmpps-domain-event-topic topic not found")
   }
 
   @Scheduled(fixedDelay = 5000)

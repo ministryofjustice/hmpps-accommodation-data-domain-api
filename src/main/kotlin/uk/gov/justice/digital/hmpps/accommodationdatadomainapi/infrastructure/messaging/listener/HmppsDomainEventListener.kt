@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.awspring.cloud.sqs.annotation.SqsListener
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsSnsDomainEvent
 
+@Profile(value = ["local", "dev", "test"])
 @Component
-class ProposedAccommodationUpdatedListener(
+class HmppsDomainEventListener(
   private val objectMapper: ObjectMapper,
 ) {
   private val log = LoggerFactory.getLogger(this::class.java)
