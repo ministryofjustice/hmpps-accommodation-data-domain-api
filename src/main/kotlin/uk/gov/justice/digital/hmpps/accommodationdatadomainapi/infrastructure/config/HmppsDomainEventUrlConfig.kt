@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.c
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsDomainEventType
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.OutgoingHmppsDomainEventType
 import java.util.UUID
 
 @Configuration
@@ -13,10 +13,10 @@ class HmppsDomainEventUrlConfig(
   val proposedAccommodationUnapprovedEventDetailsUrl: String,
 ) {
 
-  fun getUrlForDomainEventId(domainEventType: HmppsDomainEventType, id: UUID): String {
+  fun getUrlForDomainEventId(domainEventType: OutgoingHmppsDomainEventType, id: UUID): String {
     val template = when (domainEventType) {
-      HmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_APPROVED -> UrlTemplate(proposedAccommodationApprovedEventDetailsUrl)
-      HmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_UNAPPROVED -> UrlTemplate(proposedAccommodationUnapprovedEventDetailsUrl)
+      OutgoingHmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_APPROVED -> UrlTemplate(proposedAccommodationApprovedEventDetailsUrl)
+      OutgoingHmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_UNAPPROVED -> UrlTemplate(proposedAccommodationUnapprovedEventDetailsUrl)
     }
     return template.resolve("id", id.toString())
   }

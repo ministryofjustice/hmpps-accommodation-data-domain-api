@@ -4,31 +4,41 @@ import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.event.Acco
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.event.ProposedAccommodationApprovedEvent
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.event.ProposedAccommodationUnapprovedEvent
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.exceptions.InvalidProposedAccommodationApprovalState
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.utils.RootAggregateHydrateFunction
 import java.time.Instant
 import java.util.UUID
 
 class ProposedAccommodationAggregate private constructor(
   private val id: UUID,
-  private val address: String,
-  private var approved: Boolean?,
-  private val createdAt: Instant,
-  private var lastUpdatedAt: Instant?,
+  private val crn: String,
+  private val createdAt: Instant = Instant.now(),
+  private var approved: Boolean? = null,
+  private var address: String? = null,
+  private var lastUpdatedAt: Instant? = null,
 ) {
   private val domainEvents = mutableListOf<AccommodationDataDomainEvent>()
 
   companion object {
+    @RootAggregateHydrateFunction
     fun hydrate(
       id: UUID,
+      crn: String,
       address: String,
       approved: Boolean?,
       createdAt: Instant,
       lastUpdatedAt: Instant?,
     ) = ProposedAccommodationAggregate(
       id = id,
+      crn = crn,
       address = address,
       approved = approved,
       createdAt = createdAt,
       lastUpdatedAt = lastUpdatedAt,
+    )
+
+    fun createNew(id: UUID, crn: String) = ProposedAccommodationAggregate(
+      id = id,
+      crn = crn,
     )
   }
 
@@ -45,13 +55,20 @@ class ProposedAccommodationAggregate private constructor(
     }
   }
 
+  fun upsertAddress(
+    newAddress: String,
+  ) {
+    address = newAddress
+  }
+
   fun pullDomainEvents(): List<AccommodationDataDomainEvent> = domainEvents.toList().also { domainEvents.clear() }
 
-  fun snapshot() = ProposedAccommodationSnapshot(id, address, approved, createdAt, lastUpdatedAt)
+  fun snapshot() = ProposedAccommodationSnapshot(id, crn, address, approved, createdAt, lastUpdatedAt)
 
   data class ProposedAccommodationSnapshot(
     val id: UUID,
-    val address: String,
+    val crn: String,
+    val address: String?,
     val approved: Boolean?,
     val createdAt: Instant,
     val lastUpdatedAt: Instant?,

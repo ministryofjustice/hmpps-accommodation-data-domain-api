@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event
 
-enum class HmppsDomainEventType(
+enum class OutgoingHmppsDomainEventType(
   val typeName: String,
   val typeDescription: String,
 ) {
@@ -12,4 +12,9 @@ enum class HmppsDomainEventType(
     "adda.proposed.accommodation.unapproved",
     "The proposed accommodation have been unapproved",
   ),
+  ;
+
+  companion object {
+    fun from(eventType: String): OutgoingHmppsDomainEventType? = OutgoingHmppsDomainEventType.entries.find { it.name == eventType }
+  }
 }
