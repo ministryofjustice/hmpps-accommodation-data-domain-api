@@ -6,19 +6,19 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.time.Instant
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Entity
-@Table(name = "outbox_event")
-data class OutboxEventEntity(
+@Table(name = "inbox_event")
+class InboxEventEntity(
   @Id
   val id: UUID,
-  val aggregateId: UUID,
-  val aggregateType: String,
-  val domainEventType: String,
-  val payload: String,
+  val eventType: String,
+  val eventDetailUrl: String?,
+  val eventOccurredAt: OffsetDateTime,
   val createdAt: Instant,
   @Enumerated(EnumType.STRING)
   var processedStatus: ProcessedStatus,
-  val processedAt: Instant?,
+  var processedAt: Instant?,
 )

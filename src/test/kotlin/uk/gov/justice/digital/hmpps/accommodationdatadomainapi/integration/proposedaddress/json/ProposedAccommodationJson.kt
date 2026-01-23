@@ -17,3 +17,17 @@ fun expectedProposedAddressesResponseBody(id: UUID, approved: Boolean? = null): 
     "approved": $approved
   }
 """.trimIndent()
+
+fun expectedProposedAccommodationApprovedDomainEventJson(proposedAccommodationId: UUID) = """
+  {
+    "aggregateId" : "$proposedAccommodationId",
+    "type" : "PROPOSED_ACCOMMODATION_APPROVED"
+  }
+""".trimIndent()
+
+fun expectedProposedAccommodationUnapprovedDomainEventJson(proposedAccommodationId: UUID) = """
+  {
+    "aggregateId" : "$proposedAccommodationId",
+    "type" : "PROPOSED_ACCOMMODATION_UNAPPROVED"
+  }
+""".trimIndent()

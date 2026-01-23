@@ -10,6 +10,10 @@ spring:
     username: adda_user
     password: adda_psw
 
+service:
+  core-person-record:
+    base-url: https://hmpps-person-record-dev.hmpps.service.justice.gov.uk
+
 hmpps.sqs:
   useWebToken: false
   provider: localstack
@@ -21,5 +25,4 @@ hmpps.sqs:
       queueName: adda_domain_events_queue
       dlqName: adda_domain_events_dlq
       subscribeTopicId: hmpps-domain-event-topic
-      subscribeFilter: '{"eventType":["adda.proposed.accommodation.approved", "adda.proposed.accommodation.unapproved"]}'
-
+      subscribeFilter: '{"eventType":["cpr.proposed.accommodation.update"]}'

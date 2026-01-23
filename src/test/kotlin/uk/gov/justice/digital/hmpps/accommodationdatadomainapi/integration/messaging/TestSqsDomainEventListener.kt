@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
 import org.springframework.test.context.event.annotation.BeforeTestMethod
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsSnsDomainEvent
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.OutgoingHmppsDomainEventType
 import java.time.Duration
 
 @Profile("test")
@@ -37,7 +37,7 @@ class TestSqsDomainEventListener(private val objectMapper: ObjectMapper) {
     messages.clear()
   }
 
-  fun blockForMessage(eventType: HmppsDomainEventType): HmppsSnsDomainEvent {
+  fun blockForMessage(eventType: OutgoingHmppsDomainEventType): HmppsSnsDomainEvent {
     val typeName = eventType.typeName
     var waitedCount = 0
     while (!contains(typeName)) {

@@ -6,4 +6,6 @@ complexity:
     active: true
     ignoreAnnotated:
       - 'Configuration'
+      - 'Entity'
       - 'TestData'
+      - 'RootAggregateHydrateFunction'
