@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.client.ProbationIntegrationService
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.client.delius.ProbationIntegrationService
 
 @Profile(value = ["local", "dev"])
 @RestController
