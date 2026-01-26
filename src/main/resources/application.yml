@@ -2,6 +2,11 @@ info.app:
   name: HMPPS Accommodation Data Domain Api
   version: 1.0
 
+logging:
+  level:
+    org:
+      flywaydb: DEBUG
+
 spring:
   application:
     name: hmpps-accommodation-data-domain-api

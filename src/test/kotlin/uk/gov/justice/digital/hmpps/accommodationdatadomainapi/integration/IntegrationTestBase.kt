@@ -13,6 +13,7 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.client.corepersonrecord.CorePersonRecordClient
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.InboxEventRepository
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.OutboxEventRepository
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.ProposedAccommodationRepository
@@ -40,6 +41,9 @@ abstract class IntegrationTestBase {
   fun setupBase() {
     client = RestTestClient.bindToServer().baseUrl("http://localhost:$port").build()
   }
+
+  @Autowired
+  lateinit var corePersonRecordClient: CorePersonRecordClient
 
   @Autowired
   lateinit var proposedAccommodationRepository: ProposedAccommodationRepository
