@@ -8,7 +8,8 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.support.RestClientAdapter
 import org.springframework.web.service.invoker.HttpServiceProxyFactory
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.client.ProbationIntegrationDeliusClient
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.client.corepersonrecord.CorePersonRecordClient
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.client.delius.ProbationIntegrationDeliusClient
 import java.net.http.HttpClient
 import java.time.Duration
 import kotlin.reflect.KClass
@@ -29,6 +30,12 @@ class RestClientConfig(
   fun probationIntegrationDeliusClient(@Value($$"${service.probation-integration-delius.base-url}") baseUrl: String) = createClient(
     baseUrl,
     ProbationIntegrationDeliusClient::class,
+  )
+
+  @Bean
+  fun corePersonRecordClient(@Value($$"${service.core-person-record.base-url}") baseUrl: String) = createClient(
+    baseUrl,
+    CorePersonRecordClient::class,
   )
 
   private fun <T : Any> createClient(baseUrl: String, type: KClass<T>): T {
