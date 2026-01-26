@@ -11,18 +11,20 @@ val hmppsSpringBootVersion = "2.0.0"
 val hmppsSqsVersion = "6.0.0"
 val springdocVersion = "3.0.1"
 val wiremockVersion = "3.13.2"
-val shedlockVersion = "5.8.0"
+val shedlockVersion = "7.5.0"
 
 dependencies {
+
   runtimeOnly("org.postgresql:postgresql")
   runtimeOnly("org.flywaydb:flyway-database-postgresql")
-  implementation("org.flywaydb:flyway-core")
+
+  implementation("org.springframework.boot:spring-boot-starter-flyway")
+  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-restclient")
 
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:$hmppsSpringBootVersion")
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:$hmppsSqsVersion")
 
-  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.springframework.boot:spring-boot-restclient")
   implementation("net.javacrumbs.shedlock:shedlock-spring:$shedlockVersion")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:$shedlockVersion")
 
