@@ -9,7 +9,7 @@ import java.util.UUID
 interface CorePersonRecordClient {
 
   @GetExchange
-  fun getAddress(uri: URI): CorePersonRecordAddress
+  fun fetchAddress(uri: URI): CorePersonRecordAddress
 }
 
 data class CorePersonRecordAddress(
