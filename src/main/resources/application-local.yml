@@ -18,11 +18,11 @@ hmpps.sqs:
   useWebToken: false
   provider: localstack
   topics:
-    hmpps-domain-event-topic:
-      arn: arn:aws:sns:eu-west-2:000000000000:hmpps-domain-event-topic
+    domainevents:
+      arn: arn:aws:sns:eu-west-2:000000000000:domainevents
   queues:
     adda-domain-events-queue:
       queueName: adda_domain_events_queue
       dlqName: adda_domain_events_dlq
-      subscribeTopicId: hmpps-domain-event-topic
+      subscribeTopicId: domainevents
       subscribeFilter: '{"eventType":["cpr.proposed.accommodation.update"]}'

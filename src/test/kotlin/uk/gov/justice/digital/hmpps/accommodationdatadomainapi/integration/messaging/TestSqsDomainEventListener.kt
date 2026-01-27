@@ -18,7 +18,7 @@ class TestSqsDomainEventListener(private val objectMapper: ObjectMapper) {
   private val log = LoggerFactory.getLogger(this::class.java)
   private val messages = mutableListOf<HmppsSnsDomainEvent>()
 
-  @Value("\${hmpps.sqs.topics.hmpps-domain-event-topic.arn}")
+  @Value("\${hmpps.sqs.topics.domainevents.arn}")
   lateinit var topicName: String
 
   @SqsListener(queueNames = ["test-domain-events-queue"], factory = "hmppsQueueContainerFactoryProxy", pollTimeoutSeconds = "1")

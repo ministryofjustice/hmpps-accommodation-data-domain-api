@@ -14,7 +14,7 @@ import java.util.UUID
 
 class IncomingProposedAddressIntegrationTest : IntegrationTestBase() {
   private val domainTopic by lazy {
-    hmppsQueueService.findByTopicId("hmpps-domain-event-topic") ?: throw MissingTopicException("hmpps-domain-event-topic topic not found")
+    hmppsQueueService.findByTopicId("domainevents") ?: throw MissingTopicException("domainevents topic not found")
   }
   private val proposedAccommodationId: UUID = UUID.fromString("0418d8b8-3599-4224-9a69-49af02f806c5")
   private val crn: String = "X123456"
