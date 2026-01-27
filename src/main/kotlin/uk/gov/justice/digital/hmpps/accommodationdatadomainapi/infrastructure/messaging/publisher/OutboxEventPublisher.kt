@@ -35,7 +35,7 @@ class OutboxEventPublisher(
     hmppsQueueService.findByTopicId("hmpps-domain-event-topic") ?: throw MissingTopicException("hmpps-domain-event-topic topic not found")
   }
 
-  @Scheduled(fixedDelay = 50000)
+  @Scheduled(fixedDelay = 5000)
   @SchedulerLock(
     name = "OutboxEventPublisher",
     lockAtMostFor = "PT2M",

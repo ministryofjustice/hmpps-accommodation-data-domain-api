@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import org.springframework.http.MediaType.APPLICATION_JSON
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.event.AccommodationDataDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.OutgoingHmppsDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProcessedStatus
@@ -15,6 +16,7 @@ import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.asser
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.expectedProposedAccommodationApprovedDomainEventJson
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.expectedProposedAccommodationUnapprovedDomainEventJson
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.expectedProposedAddressesResponseBody
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.proposedAddressesRequestBody
 import java.time.Instant
 import java.util.UUID
 
@@ -59,7 +61,9 @@ class ProposeAddressApiIntegrationTest : IntegrationTestBase() {
   @ParameterizedTest
   @ValueSource(booleans = [true, false])
   fun `should update proposed-accommodation approval value`(approved: Boolean) {
-    client.get().uri("/proposed-accommodation/{id}", proposedAccommodationId)
+    client.put().uri("/proposed-accommodation/{id}", proposedAccommodationId)
+      .contentType(APPLICATION_JSON)
+      .body(proposedAddressesRequestBody(proposedAccommodationId, approved))
       .withJwt()
       .exchange()
       .expectStatus().isOk
