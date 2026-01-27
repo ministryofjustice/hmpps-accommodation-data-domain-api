@@ -1,28 +1,24 @@
 package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
-import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.event.AccommodationDataDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.OutgoingHmppsDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProcessedStatus
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProposedAccommodationEntity
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.assertions.assertThatJson
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.messaging.TestSqsDomainEventListener
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.expectedProposedAccommodationApprovedDomainEventJson
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.expectedProposedAccommodationUnapprovedDomainEventJson
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.expectedProposedAddressesResponseBody
-import uk.gov.justice.hmpps.test.kotlin.auth.WithMockAuthUser
 import java.time.Instant
 import java.util.UUID
 
 class ProposeAddressApiIntegrationTest : IntegrationTestBase() {
-  @Autowired
-  lateinit var testSqsDomainEventListener: TestSqsDomainEventListener
 
   private val proposedAccommodationId: UUID = UUID.randomUUID()
   private val crn: String = "X123456"
@@ -30,6 +26,7 @@ class ProposeAddressApiIntegrationTest : IntegrationTestBase() {
   @BeforeEach
   fun setup() {
     hmppsAuth.stubGrantToken()
+    outboxEventRepository.deleteAll()
     proposedAccommodationRepository.save(
       ProposedAccommodationEntity(
         id = proposedAccommodationId,
@@ -42,10 +39,15 @@ class ProposeAddressApiIntegrationTest : IntegrationTestBase() {
     )
   }
 
-  @WithMockAuthUser(roles = ["ROLE_PROBATION"])
+  @AfterAll
+  fun tearDown() {
+    outboxEventRepository.deleteAll()
+  }
+
   @Test
   fun `should get proposed-accommodation by id`() {
     client.get().uri("/proposed-accommodation/$proposedAccommodationId")
+      .withJwt()
       .exchange()
       .expectStatus().isOk
       .expectBody(String::class.java)
@@ -54,11 +56,11 @@ class ProposeAddressApiIntegrationTest : IntegrationTestBase() {
       }
   }
 
-  @WithMockAuthUser(roles = ["ROLE_PROBATION"])
   @ParameterizedTest
   @ValueSource(booleans = [true, false])
   fun `should update proposed-accommodation approval value`(approved: Boolean) {
     client.get().uri("/proposed-accommodation/{id}", proposedAccommodationId)
+      .withJwt()
       .exchange()
       .expectStatus().isOk
       .expectBody(String::class.java)

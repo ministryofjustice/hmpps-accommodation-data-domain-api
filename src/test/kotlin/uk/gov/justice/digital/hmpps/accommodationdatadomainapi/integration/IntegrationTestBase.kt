@@ -13,10 +13,10 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.client.corepersonrecord.CorePersonRecordClient
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.InboxEventRepository
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.OutboxEventRepository
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.ProposedAccommodationRepository
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.messaging.TestSqsDomainEventListener
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.wiremock.CorePersonRecordMockServer
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.wiremock.HmppsAuthMockServer
 import uk.gov.justice.hmpps.sqs.HmppsQueueService
@@ -29,6 +29,21 @@ import java.time.Duration
 @AutoConfigureRestClient
 abstract class IntegrationTestBase {
 
+  @Autowired
+  lateinit var outboxEventRepository: OutboxEventRepository
+
+  @Autowired
+  lateinit var testSqsDomainEventListener: TestSqsDomainEventListener
+
+  @Autowired
+  lateinit var proposedAccommodationRepository: ProposedAccommodationRepository
+
+  @Autowired
+  lateinit var inboxEventRepository: InboxEventRepository
+
+  @Autowired
+  lateinit var hmppsQueueService: HmppsQueueService
+
   @LocalServerPort
   protected lateinit var port: Integer
 
@@ -36,26 +51,6 @@ abstract class IntegrationTestBase {
   protected lateinit var jwtAuthHelper: JwtAuthorisationHelper
 
   protected lateinit var client: RestTestClient
-
-  @BeforeEach
-  fun setupBase() {
-    client = RestTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-  }
-
-  @Autowired
-  lateinit var corePersonRecordClient: CorePersonRecordClient
-
-  @Autowired
-  lateinit var proposedAccommodationRepository: ProposedAccommodationRepository
-
-  @Autowired
-  lateinit var outboxEventRepository: OutboxEventRepository
-
-  @Autowired
-  lateinit var inboxEventRepository: InboxEventRepository
-
-  @Autowired
-  lateinit var hmppsQueueService: HmppsQueueService
 
   val hmppsAuth = HmppsAuthMockServer()
   val corePersonRecordMockServer = CorePersonRecordMockServer()
@@ -78,20 +73,15 @@ abstract class IntegrationTestBase {
 
   @BeforeEach
   fun resetStubsAndTeardownDb() {
+    client = RestTestClient.bindToServer().baseUrl("http://localhost:$port").build()
     hmppsAuth.resetAll()
     corePersonRecordMockServer.resetAll()
-
-    inboxEventRepository.deleteAll()
-    outboxEventRepository.deleteAll()
     proposedAccommodationRepository.deleteAll()
   }
 
   @AfterAll
   fun after() {
-    inboxEventRepository.deleteAll()
-    outboxEventRepository.deleteAll()
     proposedAccommodationRepository.deleteAll()
-
     hmppsAuth.stop()
     corePersonRecordMockServer.stop()
   }
@@ -100,5 +90,13 @@ abstract class IntegrationTestBase {
     await.atMost(Duration.ofSeconds(10))
       .pollInterval(Duration.ofMillis(200))
       .untilAsserted(block)
+  }
+
+  fun RestTestClient.RequestHeadersSpec<*>.withJwt(
+    roles: List<String> = listOf("ROLE_PROBATION"),
+  ): RestTestClient.RequestHeadersSpec<*> = this.headers {
+    it.setBearerAuth(
+      jwtAuthHelper.createJwtAccessToken(roles = roles),
+    )
   }
 }

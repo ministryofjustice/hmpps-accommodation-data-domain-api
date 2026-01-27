@@ -2,13 +2,13 @@ package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.asse
 
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.utils.JsonHelper
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.utils.JsonHelper.jsonMapper
 
 class JsonAssertion(actual: String) : AbstractAssert<JsonAssertion, String>(actual, JsonAssertion::class.java) {
 
   fun matchesExpectedJson(expectedJson: String): JsonAssertion {
-    val actualJson = JsonHelper.jsonMapper.readTree(actual)
-    val expected = JsonHelper.jsonMapper.readTree(expectedJson)
+    val actualJson = jsonMapper.readTree(actual)
+    val expected = jsonMapper.readTree(expectedJson)
 
     Assertions.assertThat(actualJson).isEqualTo(expected)
 
