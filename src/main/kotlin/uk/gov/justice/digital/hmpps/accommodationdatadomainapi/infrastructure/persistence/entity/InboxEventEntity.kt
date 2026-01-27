@@ -24,4 +24,4 @@ class InboxEventEntity(
   var processedAt: Instant?,
 )
 
-fun InboxEventEntity.url(): URI = URI.create(requireNotNull(eventDetailUrl) { "Missing detail url" })
+fun InboxEventEntity.uri(): URI = URI.create(requireNotNull(eventDetailUrl) { "Missing detail url" })

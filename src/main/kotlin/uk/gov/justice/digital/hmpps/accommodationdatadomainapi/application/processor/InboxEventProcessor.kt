@@ -9,7 +9,7 @@ import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.application.servi
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.client.corepersonrecord.CorePersonRecordClient
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.IncomingHmppsDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProcessedStatus
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.url
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.uri
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.InboxEventRepository
 import java.time.Instant
 
@@ -35,7 +35,7 @@ class InboxEventProcessor(
         val outgoingHmppsDomainEventType = IncomingHmppsDomainEventType.from(inboxEvent.eventType)
         when (outgoingHmppsDomainEventType) {
           IncomingHmppsDomainEventType.CPR_PROPOSED_ACCOMMODATION_UPDATE -> {
-            val newCprAddress = corePersonRecordClient.fetchAddress(uri = inboxEvent.url())
+            val newCprAddress = corePersonRecordClient.fetchAddress(uri = inboxEvent.uri())
             proposedAccommodationApplicationService.upsertAddress(corePersonRecordAddress = newCprAddress)
             inboxEvent.processedStatus = ProcessedStatus.SUCCESS
             inboxEvent.processedAt = Instant.now()
