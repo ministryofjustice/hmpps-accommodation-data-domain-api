@@ -29,7 +29,7 @@ generic-service:
     adda-domain-events-queue-secret:
       HMPPS_SQS_QUEUES_ADDA-DOMAIN-EVENTS-QUEUE_QUEUENAME: "QUEUE_NAME"
     adda-domain-events-dlq-secret:
-      HMPPS_SQS_QUEUES_ADDA-DOMAIN-EVENTS-DLQ_DLQNAME: "QUEUE_NAME"
+      HMPPS_SQS_QUEUES_ADDA-DOMAIN-EVENTS-QUEUE_DLQNAME: "QUEUE_NAME"
     hmpps-domain-events-topic:
       HMPPS_SQS_TOPICS_HMPPS-DOMAIN-EVENT-TOPIC_ARN: "TOPIC_ARN"
     hmpps-accommodation-data-domain-api-application-insights:
