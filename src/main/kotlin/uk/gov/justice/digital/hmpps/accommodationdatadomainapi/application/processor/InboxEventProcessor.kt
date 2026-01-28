@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.application.proc
 
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -12,6 +13,7 @@ import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.pe
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.InboxEventRepository
 import java.time.Instant
 
+@Profile(value = ["local", "development", "test"])
 @Component
 class InboxEventProcessor(
   private val inboxEventRepository: InboxEventRepository,
