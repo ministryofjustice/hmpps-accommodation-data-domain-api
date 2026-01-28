@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.pe
 import java.time.Instant
 import java.util.UUID
 
-@Profile(value = ["local", "development", "test"])
+@Profile(value = ["local", "dev", "test"])
 @Component
 class HmppsDomainEventListener(
   private val objectMapper: ObjectMapper,
