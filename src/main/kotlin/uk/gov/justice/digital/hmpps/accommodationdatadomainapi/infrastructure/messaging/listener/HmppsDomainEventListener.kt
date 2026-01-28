@@ -1,12 +1,11 @@
 package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.listener
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.awspring.cloud.sqs.annotation.SqsListener
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
+import tools.jackson.databind.json.JsonMapper
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsSnsDomainEvent
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.InboxEventEntity
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProcessedStatus
@@ -17,7 +16,7 @@ import java.util.UUID
 @Profile(value = ["local", "dev", "test"])
 @Component
 class HmppsDomainEventListener(
-  private val objectMapper: ObjectMapper,
+  private val jsonMapper: JsonMapper,
   private val inboxEventRepository: InboxEventRepository,
 ) {
   private val log = LoggerFactory.getLogger(this::class.java)
@@ -25,8 +24,8 @@ class HmppsDomainEventListener(
   @SqsListener("adda-domain-events-queue", factory = "hmppsQueueContainerFactoryProxy")
   fun processMessage(msg: String) {
     try {
-      val (message) = objectMapper.readValue<SQSMessage>(msg)
-      val event = objectMapper.readValue<HmppsSnsDomainEvent>(message)
+      val (message) = jsonMapper.readValue(msg, SQSMessage::class.java)
+      val event = jsonMapper.readValue(message, HmppsSnsDomainEvent::class.java)
       inboxEventRepository.save(
         InboxEventEntity(
           id = UUID.randomUUID(),

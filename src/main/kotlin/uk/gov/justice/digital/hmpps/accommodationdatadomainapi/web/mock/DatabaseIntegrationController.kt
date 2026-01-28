@@ -7,14 +7,22 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.client.delius.ProbationIntegrationService
 
 @Profile(value = ["local", "dev"])
 @RestController
-class DatabaseIntegrationController(private val tableCountProbe: TableCountProbe) {
+class DatabaseIntegrationController(
+  private val tableCountProbe: TableCountProbe,
+  private val probationIntegrationDeliusService: ProbationIntegrationService,
+) {
 
   @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_ACCOMMODATION_API__SINGLE_ACCOMMODATION_SERVICE')")
   @GetMapping("/db/table/count")
   fun getMockData() = ResponseEntity.ok("Current active tables in db: ${tableCountProbe.countTables()}")
+
+  @PreAuthorize("hasAnyRole('ROLE_PROBATION', 'ROLE_PROBATION_API__APPROVED_PREMISES__CASE_DETAIL')")
+  @GetMapping("probation-integration/info")
+  fun getIntegrationServicesInfo() = ResponseEntity.ok(probationIntegrationDeliusService.getInfoResponse())
 }
 
 @Component

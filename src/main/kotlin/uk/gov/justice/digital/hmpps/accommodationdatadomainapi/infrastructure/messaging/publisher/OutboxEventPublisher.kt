@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.publisher
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
@@ -10,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 import software.amazon.awssdk.services.sns.model.MessageAttributeValue
 import software.amazon.awssdk.services.sns.model.PublishRequest
 import software.amazon.awssdk.services.sns.model.PublishResponse
+import tools.jackson.databind.json.JsonMapper
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.event.AccommodationDataDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.config.HmppsDomainEventUrlConfig
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.HmppsSnsDomainEvent
@@ -24,7 +24,7 @@ import java.time.ZoneOffset
 @Profile(value = ["local", "dev", "test"])
 @Component
 class OutboxEventPublisher(
-  private val objectMapper: ObjectMapper,
+  private val jsonMapper: JsonMapper,
   private val hmppsDomainEventUrlConfig: HmppsDomainEventUrlConfig,
   private val outboxEventRepository: OutboxEventRepository,
   private val hmppsQueueService: HmppsQueueService,
@@ -78,7 +78,7 @@ class OutboxEventPublisher(
     return domainTopic.snsClient.publish(
       PublishRequest.builder()
         .topicArn(domainTopic.arn)
-        .message(objectMapper.writeValueAsString(snsEvent))
+        .message(jsonMapper.writeValueAsString(snsEvent))
         .messageAttributes(
           mapOf(
             "eventType" to MessageAttributeValue.builder().dataType("String").stringValue(snsEvent.eventType).build(),

@@ -1,18 +1,20 @@
 package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.services.sns.model.MessageAttributeValue
 import software.amazon.awssdk.services.sns.model.PublishRequest
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProcessedStatus
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.IntegrationTestBase
 import uk.gov.justice.hmpps.sqs.MissingTopicException
-import uk.gov.justice.hmpps.test.kotlin.auth.WithMockAuthUser
 import java.time.Instant
 import java.time.ZoneOffset
 import java.util.UUID
 
 class IncomingProposedAddressIntegrationTest : IntegrationTestBase() {
+
   private val domainTopic by lazy {
     hmppsQueueService.findByTopicId("hmpps-domain-event-topic") ?: throw MissingTopicException("hmpps-domain-event-topic topic not found")
   }
@@ -22,7 +24,17 @@ class IncomingProposedAddressIntegrationTest : IntegrationTestBase() {
   private val eventDescription = "Proposed accommodation update from Core Person Record service"
   private val eventDetailUrl = "http://localhost:9993/probation/$crn/proposed-addresses/$proposedAccommodationId"
 
-  @WithMockAuthUser(roles = ["ROLE_PROBATION"])
+  @BeforeEach
+  fun setup() {
+    hmppsAuth.stubGrantToken()
+    inboxEventRepository.deleteAll()
+  }
+
+  @AfterAll
+  fun tearDown() {
+    inboxEventRepository.deleteAll()
+  }
+
   @Test
   fun `should process incoming HMPPS CPR_PROPOSED_ACCOMMODATION_UPDATE domain events`() {
     // checks that we process event and create a record in the proposed_accommodation table

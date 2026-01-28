@@ -1,33 +1,26 @@
 package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.http.MediaType.APPLICATION_JSON
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.event.AccommodationDataDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.OutgoingHmppsDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProcessedStatus
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProposedAccommodationEntity
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.assertions.assertThatJson
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.messaging.TestSqsDomainEventListener
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.expectedProposedAccommodationApprovedDomainEventJson
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.expectedProposedAccommodationUnapprovedDomainEventJson
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.expectedProposedAddressesResponseBody
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.proposedAddressesRequestBody
-import uk.gov.justice.hmpps.test.kotlin.auth.WithMockAuthUser
 import java.time.Instant
 import java.util.UUID
 
 class ProposeAddressApiIntegrationTest : IntegrationTestBase() {
-  @Autowired
-  lateinit var testSqsDomainEventListener: TestSqsDomainEventListener
 
   private val proposedAccommodationId: UUID = UUID.randomUUID()
   private val crn: String = "X123456"
@@ -35,6 +28,7 @@ class ProposeAddressApiIntegrationTest : IntegrationTestBase() {
   @BeforeEach
   fun setup() {
     hmppsAuth.stubGrantToken()
+    outboxEventRepository.deleteAll()
     proposedAccommodationRepository.save(
       ProposedAccommodationEntity(
         id = proposedAccommodationId,
@@ -47,33 +41,41 @@ class ProposeAddressApiIntegrationTest : IntegrationTestBase() {
     )
   }
 
-  @WithMockAuthUser(roles = ["ROLE_PROBATION"])
-  @Test
-  fun `should get proposed-accommodation by id`() {
-    val result = mockMvc.perform(get("/proposed-accommodation/$proposedAccommodationId"))
-      .andExpect(status().isOk)
-      .andReturn()
-      .response
-      .contentAsString
-
-    assertThatJson(result).matchesExpectedJson(expectedProposedAddressesResponseBody(proposedAccommodationId))
+  @AfterAll
+  fun tearDown() {
+    outboxEventRepository.deleteAll()
   }
 
-  @WithMockAuthUser(roles = ["ROLE_PROBATION"])
+  @Test
+  fun `should get proposed-accommodation by id`() {
+    client.get().uri("/proposed-accommodation/$proposedAccommodationId")
+      .withJwt()
+      .exchange()
+      .expectStatus().isOk
+      .expectBody(String::class.java)
+      .value {
+        assertThatJson(it!!).matchesExpectedJson(expectedProposedAddressesResponseBody(proposedAccommodationId))
+      }
+  }
+
   @ParameterizedTest
   @ValueSource(booleans = [true, false])
   fun `should update proposed-accommodation approval value`(approved: Boolean) {
-    val result = mockMvc.perform(
-      put("/proposed-accommodation/{id}", proposedAccommodationId)
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(proposedAddressesRequestBody(proposedAccommodationId, approved)),
-    )
-      .andExpect(status().isOk)
-      .andReturn()
-      .response
-      .contentAsString
-
-    assertThatJson(result).matchesExpectedJson(expectedProposedAddressesResponseBody(proposedAccommodationId, approved))
+    client.put().uri("/proposed-accommodation/{id}", proposedAccommodationId)
+      .contentType(APPLICATION_JSON)
+      .body(proposedAddressesRequestBody(proposedAccommodationId, approved))
+      .withJwt()
+      .exchange()
+      .expectStatus().isOk
+      .expectBody(String::class.java)
+      .value {
+        assertThatJson(it!!).matchesExpectedJson(
+          expectedProposedAddressesResponseBody(
+            proposedAccommodationId,
+            approved,
+          ),
+        )
+      }
 
     val expectedOutgoingHmppsDomainEventType = when (approved) {
       true -> OutgoingHmppsDomainEventType.ADDA_PROPOSED_ACCOMMODATION_APPROVED
@@ -102,6 +104,7 @@ class ProposeAddressApiIntegrationTest : IntegrationTestBase() {
     val (expectedInternalDomainEventType, expectedPayload) = when (approved) {
       true ->
         AccommodationDataDomainEventType.PROPOSED_ACCOMMODATION_APPROVED to expectedProposedAccommodationApprovedDomainEventJson(proposedAccommodationId)
+
       false ->
         AccommodationDataDomainEventType.PROPOSED_ACCOMMODATION_UNAPPROVED to expectedProposedAccommodationUnapprovedDomainEventJson(proposedAccommodationId)
     }
