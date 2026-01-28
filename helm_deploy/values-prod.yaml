@@ -10,6 +10,7 @@ generic-service:
     tlsSecretName: hmpps-accommodation-data-domain-api-prod-cert
 
   env:
+    SPRING_PROFILES_ACTIVE: prod
     SENTRY_ENVIRONMENT: prod
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: "applicationinsights.json"
     HMPPS_AUTH_URL: "https://sign-in.hmpps.service.justice.gov.uk/auth"

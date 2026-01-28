@@ -13,7 +13,7 @@ import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.pe
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.InboxEventRepository
 import java.time.Instant
 
-@Profile(value = ["local", "development", "test"])
+@Profile(value = ["local", "dev", "test"])
 @Component
 class InboxEventProcessor(
   private val inboxEventRepository: InboxEventRepository,
@@ -53,6 +53,7 @@ class InboxEventProcessor(
             inboxEvent.processedStatus = ProcessedStatus.FAILED
           }
         }
+
         else -> log.error("Unexpected event in inbox with inbox event id ${inboxEvent.id} and event type ${inboxEvent.eventType}")
       }
     }
