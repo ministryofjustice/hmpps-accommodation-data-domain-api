@@ -36,23 +36,23 @@ class InboxEventProcessor(
       return
     }
     inboxEvents.forEach { inboxEvent ->
-        val outgoingHmppsDomainEventType = IncomingHmppsDomainEventType.from(inboxEvent.eventType)
-        when (outgoingHmppsDomainEventType) {
-          IncomingHmppsDomainEventType.CPR_PROPOSED_ACCOMMODATION_UPDATE -> {
-            log.info("Making callback to CPR using detailUrl ${inboxEvent.eventDetailUrl}")
-            try {
-              val newCprAddress = corePersonRecordClient.fetchAddress(resourceUrl = inboxEvent.eventDetailUrl!!)
-              proposedAccommodationApplicationService.upsertAddress(corePersonRecordAddress = newCprAddress)
-              inboxEvent.processedStatus = ProcessedStatus.SUCCESS
-              inboxEvent.processedAt = Instant.now()
-              inboxEventRepository.save(inboxEvent)
-            } catch (e: Exception) {
-              log.error("Filed to process inbox event with id ${inboxEvent.id} exception ${e.message}")
-              inboxEvent.processedStatus = ProcessedStatus.FAILED
-            }
+      val outgoingHmppsDomainEventType = IncomingHmppsDomainEventType.from(inboxEvent.eventType)
+      when (outgoingHmppsDomainEventType) {
+        IncomingHmppsDomainEventType.CPR_PROPOSED_ACCOMMODATION_UPDATE -> {
+          log.info("Making callback to CPR using detailUrl ${inboxEvent.eventDetailUrl}")
+          try {
+            val newCprAddress = corePersonRecordClient.fetchAddress(resourceUrl = inboxEvent.eventDetailUrl!!)
+            proposedAccommodationApplicationService.upsertAddress(corePersonRecordAddress = newCprAddress)
+            inboxEvent.processedStatus = ProcessedStatus.SUCCESS
+            inboxEvent.processedAt = Instant.now()
+            inboxEventRepository.save(inboxEvent)
+          } catch (e: Exception) {
+            log.error("Filed to process inbox event with id ${inboxEvent.id} exception ${e.message}")
+            inboxEvent.processedStatus = ProcessedStatus.FAILED
           }
-          else -> log.error("Unexpected event in inbox with inbox event id ${inboxEvent.id} and event type ${inboxEvent.eventType}")
         }
+        else -> log.error("Unexpected event in inbox with inbox event id ${inboxEvent.id} and event type ${inboxEvent.eventType}")
       }
+    }
   }
 }
