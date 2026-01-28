@@ -46,7 +46,7 @@ class OutboxEventPublisher(
     log.info("Start OutboxEventPublisher...")
     val outboxEventsToPublish = outboxEventRepository.findAllByProcessedStatus(ProcessedStatus.PENDING)
     if (outboxEventsToPublish.isEmpty()) {
-      log.info("No events to publish")
+      log.info("No outbox events to publish")
       return
     }
     outboxEventsToPublish.forEach {
