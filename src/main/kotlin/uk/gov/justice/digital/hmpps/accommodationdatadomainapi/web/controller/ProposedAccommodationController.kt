@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.web.controller
 
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,9 +18,13 @@ import java.util.UUID
 class ProposedAccommodationController(
   private val proposedAccommodationApplicationService: ProposedAccommodationApplicationService,
 ) {
+
+  private val log = LoggerFactory.getLogger(this::class.java)
+
   @PreAuthorize("hasAnyRole('ROLE_PROBATION')")
   @GetMapping("/{id}")
   fun get(@PathVariable id: UUID): ResponseEntity<ProposedAccommodationDto> {
+    log.info("get proposed accommodation by id $id")
     val response = proposedAccommodationApplicationService.getById(id)
     return ResponseEntity.ok(response)
   }

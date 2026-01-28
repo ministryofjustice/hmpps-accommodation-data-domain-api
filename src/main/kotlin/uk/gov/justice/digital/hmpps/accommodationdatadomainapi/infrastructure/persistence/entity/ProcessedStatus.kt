@@ -3,4 +3,5 @@ package uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.p
 enum class ProcessedStatus {
   PENDING,
   SUCCESS,
+  FAILED
 }

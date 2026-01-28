@@ -29,16 +29,27 @@ class InboxEventProcessor(
   )
   @Transactional
   fun process() {
-    inboxEventRepository.findAllByProcessedStatus(ProcessedStatus.PENDING)
-      .forEach { inboxEvent ->
+    log.info("Start InboxEventProcessor...")
+    val inboxEvents = inboxEventRepository.findAllByProcessedStatus(ProcessedStatus.PENDING)
+    if (inboxEvents.isEmpty()) {
+      log.info("No inbox events to process")
+      return
+    }
+    inboxEvents.forEach { inboxEvent ->
         val outgoingHmppsDomainEventType = IncomingHmppsDomainEventType.from(inboxEvent.eventType)
         when (outgoingHmppsDomainEventType) {
           IncomingHmppsDomainEventType.CPR_PROPOSED_ACCOMMODATION_UPDATE -> {
-            val newCprAddress = corePersonRecordClient.fetchAddress(resourceUrl = inboxEvent.eventDetailUrl!!)
-            proposedAccommodationApplicationService.upsertAddress(corePersonRecordAddress = newCprAddress)
-            inboxEvent.processedStatus = ProcessedStatus.SUCCESS
-            inboxEvent.processedAt = Instant.now()
-            inboxEventRepository.save(inboxEvent)
+            log.info("Making callback to CPR using detailUrl ${inboxEvent.eventDetailUrl}")
+            try {
+              val newCprAddress = corePersonRecordClient.fetchAddress(resourceUrl = inboxEvent.eventDetailUrl!!)
+              proposedAccommodationApplicationService.upsertAddress(corePersonRecordAddress = newCprAddress)
+              inboxEvent.processedStatus = ProcessedStatus.SUCCESS
+              inboxEvent.processedAt = Instant.now()
+              inboxEventRepository.save(inboxEvent)
+            } catch (e: Exception) {
+              log.error("Filed to process inbox event with id ${inboxEvent.id} exception ${e.message}")
+              inboxEvent.processedStatus = ProcessedStatus.FAILED
+            }
           }
           else -> log.error("Unexpected event in inbox with inbox event id ${inboxEvent.id} and event type ${inboxEvent.eventType}")
         }
