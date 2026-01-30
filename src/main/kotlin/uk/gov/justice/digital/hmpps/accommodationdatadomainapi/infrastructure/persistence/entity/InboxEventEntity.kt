@@ -5,6 +5,7 @@ import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import java.net.URI
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -22,3 +23,5 @@ class InboxEventEntity(
   var processedStatus: ProcessedStatus,
   var processedAt: Instant?,
 )
+
+fun InboxEventEntity.uri(): URI = URI.create(requireNotNull(eventDetailUrl) { "Missing detail url" })

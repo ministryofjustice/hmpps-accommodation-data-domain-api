@@ -4,15 +4,22 @@ hmpps-auth:
 server:
   port: 9010
 
+logging:
+  level:
+    org:
+      flywaydb: DEBUG
+
+service:
+  probation-integration-delius:
+    base-url: https://approved-premises-and-oasys-dev.hmpps.service.justice.gov.uk
+  core-person-record:
+    base-url: https://hmpps-person-record-dev.hmpps.service.justice.gov.uk
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/adda_db
     username: adda_user
     password: adda_psw
-
-service:
-  core-person-record:
-    base-url: https://hmpps-person-record-dev.hmpps.service.justice.gov.uk
 
 hmpps.sqs:
   useWebToken: false

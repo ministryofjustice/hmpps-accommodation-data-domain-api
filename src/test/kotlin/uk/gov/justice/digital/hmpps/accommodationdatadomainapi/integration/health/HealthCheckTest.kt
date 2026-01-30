@@ -5,24 +5,24 @@ import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.Integ
 
 class HealthCheckTest : IntegrationTestBase() {
 
-//  @Test
-//  fun `Health page reports ok`() {
-//    stubPingWithResponse(200)
-//
-//    webTestClient.get()
-//      .uri("/health")
-//      .exchange()
-//      .expectStatus()
-//      .isOk
-//      .expectBody()
-//      .jsonPath("status").isEqualTo("UP")
-//  }
+  @Test
+  fun `Health page reports ok`() {
+    stubPingWithResponse(200)
+
+    client.get()
+      .uri("/health")
+      .exchange()
+      .expectStatus()
+      .isOk
+      .expectBody()
+      .jsonPath("status").isEqualTo("UP")
+  }
 
   @Test
   fun `Health page reports down`() {
     stubPingWithResponse(503)
 
-    webTestClient.get()
+    client.get()
       .uri("/health")
       .exchange()
       .expectStatus()
@@ -34,7 +34,7 @@ class HealthCheckTest : IntegrationTestBase() {
 
   @Test
   fun `Health ping page is accessible`() {
-    webTestClient.get()
+    client.get()
       .uri("/health/ping")
       .exchange()
       .expectStatus()
@@ -45,7 +45,7 @@ class HealthCheckTest : IntegrationTestBase() {
 
   @Test
   fun `readiness reports ok`() {
-    webTestClient.get()
+    client.get()
       .uri("/health/readiness")
       .exchange()
       .expectStatus()
@@ -56,7 +56,7 @@ class HealthCheckTest : IntegrationTestBase() {
 
   @Test
   fun `liveness reports ok`() {
-    webTestClient.get()
+    client.get()
       .uri("/health/liveness")
       .exchange()
       .expectStatus()
