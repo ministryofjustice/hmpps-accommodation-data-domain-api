@@ -13,13 +13,8 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.client.RestTestClient
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.InboxEventRepository
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.OutboxEventRepository
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.ProposedAccommodationRepository
-import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.messaging.TestSqsDomainEventListener
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.wiremock.CorePersonRecordMockServer
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.wiremock.HmppsAuthMockServer
-import uk.gov.justice.hmpps.sqs.HmppsQueueService
 import uk.gov.justice.hmpps.test.kotlin.auth.JwtAuthorisationHelper
 import java.time.Duration
 
@@ -28,21 +23,6 @@ import java.time.Duration
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureRestClient
 abstract class IntegrationTestBase {
-
-  @Autowired
-  lateinit var outboxEventRepository: OutboxEventRepository
-
-  @Autowired
-  lateinit var testSqsDomainEventListener: TestSqsDomainEventListener
-
-  @Autowired
-  lateinit var proposedAccommodationRepository: ProposedAccommodationRepository
-
-  @Autowired
-  lateinit var inboxEventRepository: InboxEventRepository
-
-  @Autowired
-  lateinit var hmppsQueueService: HmppsQueueService
 
   @LocalServerPort
   protected lateinit var port: Integer
@@ -76,12 +56,10 @@ abstract class IntegrationTestBase {
     client = RestTestClient.bindToServer().baseUrl("http://localhost:$port").build()
     hmppsAuth.resetAll()
     corePersonRecordMockServer.resetAll()
-    proposedAccommodationRepository.deleteAll()
   }
 
   @AfterAll
   fun after() {
-    proposedAccommodationRepository.deleteAll()
     hmppsAuth.stop()
     corePersonRecordMockServer.stop()
   }

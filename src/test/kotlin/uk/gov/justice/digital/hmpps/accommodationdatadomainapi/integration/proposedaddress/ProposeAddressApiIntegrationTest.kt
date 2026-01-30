@@ -6,13 +6,17 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType.APPLICATION_JSON
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.domain.event.AccommodationDataDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.messaging.event.OutgoingHmppsDomainEventType
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProcessedStatus
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.entity.ProposedAccommodationEntity
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.OutboxEventRepository
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.infrastructure.persistence.repository.ProposedAccommodationRepository
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.assertions.assertThatJson
+import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.messaging.TestSqsDomainEventListener
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.expectedProposedAccommodationApprovedDomainEventJson
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.expectedProposedAccommodationUnapprovedDomainEventJson
 import uk.gov.justice.digital.hmpps.accommodationdatadomainapi.integration.proposedaddress.json.expectedProposedAddressesResponseBody
@@ -22,6 +26,15 @@ import java.util.UUID
 
 class ProposeAddressApiIntegrationTest : IntegrationTestBase() {
 
+  @Autowired
+  lateinit var outboxEventRepository: OutboxEventRepository
+
+  @Autowired
+  lateinit var testSqsDomainEventListener: TestSqsDomainEventListener
+
+  @Autowired
+  lateinit var proposedAccommodationRepository: ProposedAccommodationRepository
+
   private val proposedAccommodationId: UUID = UUID.randomUUID()
   private val crn: String = "X123456"
 
@@ -29,6 +42,7 @@ class ProposeAddressApiIntegrationTest : IntegrationTestBase() {
   fun setup() {
     hmppsAuth.stubGrantToken()
     outboxEventRepository.deleteAll()
+    proposedAccommodationRepository.deleteAll()
     proposedAccommodationRepository.save(
       ProposedAccommodationEntity(
         id = proposedAccommodationId,
@@ -44,6 +58,7 @@ class ProposeAddressApiIntegrationTest : IntegrationTestBase() {
   @AfterAll
   fun tearDown() {
     outboxEventRepository.deleteAll()
+    proposedAccommodationRepository.deleteAll()
   }
 
   @Test
